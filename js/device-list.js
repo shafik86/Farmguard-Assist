@@ -42,7 +42,7 @@ const ladangs=[
 function renderDeviceList(){
     document.getElementById('devList').innerHTML=ladangs.map(l=>`
         <div class="dev-group">
-            <div class="dg-hd">
+            <div class="section-top">
                 <div class="dg-left">
                     <div class="dg-ic"><i class="bi bi-tree-fill"></i></div>
                     <div>
@@ -85,14 +85,7 @@ function navHome(){window.location.href='index.html'}
 function navDevice(){window.location.href='device-list.html'}
 function navAccount(){window.location.href='account.html'}
 
-// Dark mode
-let dk=localStorage.getItem('darkMode')==='true';
-if(dk)document.documentElement.classList.add('dark-mode');
-function toggleDark(){
-    dk=!dk;
-    document.documentElement.classList.toggle('dark-mode',dk);
-    localStorage.setItem('darkMode',String(dk));
-}
+// Dark mode: handled by js/script.js (toggleDarkMode)
 
 // ===== NAV - Set active based on current page =====
 function setActiveNav(){
@@ -101,12 +94,51 @@ function setActiveNav(){
     navButtons[1].classList.add('act'); // Device is always active on this page
 }
 
-// Bottom nav listeners
-document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
-    document.querySelectorAll('.ni').forEach(x=>x.classList.remove('act'));
-    n.classList.add('act');
-}));
-
 // Init
 renderDeviceList();
 setActiveNav();
+
+// ---- Add Device modal logic ----
+function openAddDeviceModal(){
+    populateFarmOptions();
+    const d = new Date();
+    document.getElementById('deviceDate').value = d.toISOString().split('T')[0];
+    document.getElementById('addDeviceModal').style.display = 'flex';
+}
+function closeAddDeviceModal(){
+    document.getElementById('addDeviceModal').style.display = 'none';
+    // clear inputs
+    const n=document.getElementById('deviceName'); if(n) n.value='';
+    const l=document.getElementById('deviceLoc'); if(l) l.value='';
+    const a=document.getElementById('autoNo'); if(a) a.checked=false;
+}
+function populateFarmOptions(){
+    const sel = document.getElementById('farmSelect');
+    if(!sel) return;
+    let farms = (typeof getLadangs === 'function') ? getLadangs() : ladangs.map(f=>({name:f.name, loc:f.loc}));
+    sel.innerHTML = farms.map((f,i)=>`<option value="${i}">${f.name}</option>`).join('');
+}
+function addDevice(){
+    const sel = document.getElementById('farmSelect');
+    const idx = parseInt(sel.value||0,10);
+    const nameEl = document.getElementById('deviceName');
+    const locEl = document.getElementById('deviceLoc');
+    const auto = document.getElementById('autoNo')?.checked;
+    const devices = ladangs[idx].devices;
+    const nextNo = devices.length ? Math.max(...devices.map(d=>d.no)) + 1 : 1;
+    if(!nameEl.value && !auto){ alert('Sila isi nama device atau pilih auto running number.'); return }
+    const id = 'FG-' + String(nextNo).padStart(3,'0');
+    const name = nameEl.value || ('FG-Unit-' + String(nextNo).padStart(3,'0'));
+    const date = document.getElementById('deviceDate').value || new Date().toISOString().split('T')[0];
+    devices.push({no: nextNo, id: id, name: name, on:false, batt:100, loc: locEl.value||'', created: date});
+    renderDeviceList();
+    closeAddDeviceModal();
+}
+
+// wire button after DOM ready
+document.addEventListener('DOMContentLoaded',function(){
+    const btn = document.getElementById('openAddDevice');
+    if(btn) btn.addEventListener('click',openAddDeviceModal);
+});
+
+// Device-list relies on ladang.js for add/close modal functions when adding ladang

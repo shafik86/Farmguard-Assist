@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FarmGuard — Ladang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app">
+    <div class="header">
+        <div class="brand">
+            <div class="brand-logo"><i class="bi bi-tree-fill"></i></div>
+            <div class="brand-name">Farm<span>Guard</span></div>
+        </div>
+        <div class="hdr-right">
+            <button class="hdr-btn" onclick="navBack()"><i class="bi bi-arrow-left"></i></button>
+            <button class="hdr-btn" title="Notifications"><i class="bi bi-bell"></i></button>
+            <button class="dark-mode-btn" onclick="toggleDarkMode()" title="Dark Mode"><i class="bi bi-moon-fill"></i></button>
+        </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0">
+        <div class="page-title">Ladang</div>
+        <button id="openAddLadang" class="dn-edit-btn">+ Tambah Ladang</button>
+    </div>
+
+    <div id="ladangListArea"></div>
+</div>
+
+<!-- Add Ladang Modal -->
+<div id="addLadangModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal-content">
+        <div class="modal-hdr">
+            <span>Tambah Ladang</span>
+            <button class="modal-close" onclick="closeAddLadangModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+            <label class="ai-label">Nama Ladang</label>
+            <input id="ladangName" class="name-input" placeholder="Contoh: Ladang Gua Musang">
+            <label class="ai-label" style="margin-top:10px">Lokasi (Bandar, Negeri)</label>
+            <input id="ladangLoc" class="name-input" placeholder="Contoh: Gua Musang, Kelantan">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeAddLadangModal()">Batal</button>
+            <button class="btn-save" onclick="saveLadang()">Simpan</button>
+        </div>
+    </div>
+</div>
+    <!-- Bottom Nav -->
+    <div class="bnav">
+        <button class="ni" onclick="navHome()"><i class="bi bi-house-fill"></i><span>Home</span></button>
+        <button class="ni" onclick="navDevice()"><i class="bi bi-cpu"></i><span>Device</span></button>
+        <button class="ni" onclick="alert('Analytics page coming soon')"><i class="bi bi-bar-chart-fill"></i><span>Analytics</span></button>
+        <button class="ni" onclick="alert('Settings page coming soon')"><i class="bi bi-gear"></i><span>Settings</span></button>
+        <button class="ni" onclick="navAccount()"><i class="bi bi-person-fill"></i><span>Account</span></button>
+    </div>
+
+<script src="js/script.js"></script>
+<script src="js/ladang.js"></script>
+</body>
+</html>

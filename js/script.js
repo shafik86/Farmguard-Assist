@@ -37,6 +37,70 @@ window.addEventListener('DOMContentLoaded',function(){
     updateDisplayName();
 });
 
+// ===== Account / Header Helpers (migrated from js/account.js) =====
+function editDisplayName(){
+    const input = document.getElementById('nameInput');
+    if(input) input.value = localStorage.getItem('displayName')||'FarmGuard';
+    const modal = document.getElementById('editNameModal');
+    if(modal) modal.style.display = 'flex';
+}
+function closeEditNameModal(){
+    const modal = document.getElementById('editNameModal');
+    if(modal) modal.style.display = 'none';
+}
+function saveDisplayName(){
+    const el = document.getElementById('nameInput');
+    if(!el) return;
+    const name = el.value.trim();
+    if(!name) return;
+    localStorage.setItem('displayName', name);
+    const dn = document.getElementById('displayNameText'); if(dn) dn.textContent = name;
+    if(document.getElementById('headerBrandName')) document.getElementById('headerBrandName').textContent = name;
+    updateLogo();
+    closeEditNameModal();
+}
+
+function triggerLogoUpload(){
+    const inp = document.getElementById('logoUpload'); if(inp) inp.click();
+}
+function handleLogoUpload(event){
+    const file = event.target && event.target.files && event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const data = e.target.result;
+        const img = new Image();
+        img.onload = function(){
+            localStorage.setItem('logoData', data);
+            updateLogo();
+        };
+        img.src = data;
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateAllLogos(){ updateLogo(); }
+
+// Collapse/Expand panels on Account/Settings pages
+function toggleNotifications(){
+    const panel = document.getElementById('notificationsPanel');
+    const arrow = document.getElementById('notifArrow');
+    if(panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    if(arrow) arrow.classList.toggle('open');
+}
+function toggleAbout(){
+    const panel = document.getElementById('aboutPanel');
+    const arrow = document.getElementById('aboutArrow');
+    if(panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    if(arrow) arrow.classList.toggle('open');
+}
+function toggleContacts(){
+    const panel = document.getElementById('contactsPanel');
+    const arrow = document.getElementById('contactsArrow');
+    if(panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    if(arrow) arrow.classList.toggle('open');
+}
+
 // Load selected device from localStorage
 function loadSelectedDevice(){
     const devName=localStorage.getItem('selectedDeviceName');
@@ -51,6 +115,7 @@ function loadSelectedDevice(){
 function navHome(){window.location.href='index.html'}
 function navDevice(){window.location.href='device-list.html'}
 function navAccount(){window.location.href='account.html'}
+function navSettings(){window.location.href='settings.html'}
 
 function toggleDarkMode(){
     darkMode=!darkMode;
@@ -291,7 +356,12 @@ document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{docu
 function setActiveNav(){
     const navButtons=document.querySelectorAll('.ni');
     navButtons.forEach(btn=>btn.classList.remove('act'));
-    navButtons[1].classList.add('act'); // Device is always active on this page
+    const path = window.location.pathname.split('/').pop();
+    if(path === '' || path === 'index.html') navButtons[0].classList.add('act');
+    else if(path.includes('device')) navButtons[1].classList.add('act');
+    else if(path === 'settings.html') navButtons[3].classList.add('act');
+    else if(path === 'account.html') navButtons[4].classList.add('act');
+    else navButtons[0].classList.add('act');
 }
 
 loadSelectedDevice();
